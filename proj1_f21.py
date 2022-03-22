@@ -1,7 +1,3 @@
-#########################################
-##### Name:          Siyu Chen      #####
-##### Uniqname:       siychen       #####
-#########################################
 
 import json
 from pickle import TRUE
