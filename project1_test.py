@@ -52,7 +52,7 @@ class Song(Media):
     def info(self):
         return super().info()+ ' [' + self.genre +']'
     def length(self):
-        return round(self.track_length/1000,0)  
+        return round(self.track_length/1000,0)  #convert ms to s
 
 class Movie(Media):
     def __init__(self, title="No Title", author="No Author", release_year='No Release Year', url='No URL', rating='No Rating', movie_length=0,json=None):
@@ -72,7 +72,7 @@ class Movie(Media):
         return super().info() + ' [' +self.rating + ']'
     
     def length(self):
-        return round(self.movie_length/60000,0) 
+        return round(self.movie_length/60000,0) # ms to minutes 
 
 # Other classes, functions, etc. should go here
 
@@ -96,20 +96,21 @@ def get_url(input):
         print('Invalid. Can not search for the result.')
         return None
     
-def create_Media_list(dict_list):  
+def create_Media_list(list_dict1):  
     other_media_list=[]
     song_list=[]
     movie_list=[]
     #print(dict1)
-    for dict1 in dict_list:
+    for dict1 in list_dict1:
+        #print(dict1,'this is dict1!!!!!')
         try:
             if 'kind' not in dict1.keys():
                 if Media(json=dict1) not in other_media_list:
                     other_media_list.append(Media(json=dict1))
-            if dict1['kind'] == 'song':
+            if dict1['kind']=='song':
                 if Song(json=dict1) not in song_list:
                     song_list.append(Song(json=dict1))
-            if dict1['kind'] == "feature-movie":
+            if dict1['kind']=="feature-movie":
                 if Movie(json=dict1) not in movie_list:
                     movie_list.append(Movie(json=dict1))
         except:
@@ -122,39 +123,47 @@ def create_Media_list(dict_list):
 if __name__ == "__main__":
     
     search_input=input('Please enter a search term, or enter "exit" to quit: ')
-    # make sure first-time input should be non-numeric, otherwise re-enter until it's correct 
-    while search_input.isnumeric() is True:
-            search_input=input('Invalid input! Please enter a search term, or enter "exit" to quit: ')
-        
+    if search_input.isnumeric() is True:
+            print('invalid input')
+           
+
     while True:
         if search_input.lower()=='exit':
             print('Bye!')
             break
-              
+        
+
+        #while search_input.lower() !='exit' and (search_input.isnumeric() is not True): 
+             
+
         if search_input.isnumeric() is False:
             Song_list,Movie_list,Other_list=create_Media_list(get_url(search_input))  
 
             if len(Song_list)!=0:
-                    print('Song \n')
+                    print('\nSong\n')
                     for i in range(len(Song_list)):
                         print(str(i+1) + ' ' + Song_list[i].info())
+                    #search_input=input("Enter a number for to lauch preview or enter a search query to search or enter 'exit' to quit: ")
 
             if len(Movie_list)!=0:
-                    print('Movie \n')
+                    print('\nMovie\n')
                     for i in range(len(Movie_list)):
                         print(str(len(Song_list)+i+1) + ' ' + Movie_list[i].info())
-  
+                    #search_input=input("Enter a number for to lauch preview or enter a search query to search or enter 'exit' to quit: ")
+
             if len(Other_list)!=0:
-                    print('Other_media \n')
+                    print('\nOther_media\n')
                     for i in range(len(Other_list)):
                         print(str(len(Song_list)+len(Movie_list)+i+1) + ' ' + Other_list[i].info())
-                  
-        #launch preview.     
+            
+            
+                    
+            #launch preview.     
         if search_input.isnumeric():
             overall_media_list = Song_list + Movie_list + Other_list
             search_index=int(search_input)
             if int(search_index)>len(overall_media_list):
-                print('Invalid! please enter a number between 1 and ',str(len(overall_media_list)))
+                print('invalid! please enter a number between 1 and ',str(len(overall_media_list)))
             elif int(search_index)<= len(overall_media_list):
                 open_url=overall_media_list[int(search_index)-1].url
                 print('Lauching  ' + open_url)
